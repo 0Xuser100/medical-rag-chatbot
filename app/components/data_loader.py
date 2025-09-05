@@ -1,7 +1,7 @@
 import os
 from app.components.pdf_loader import load_pdf_files,create_text_chunks
 from app.components.vector_store import save_vector_store
-
+from app.config.config import DB_FAISS_PATH
 
 from app.common.logger import get_logger
 from app.common.custom_exception import CustomException

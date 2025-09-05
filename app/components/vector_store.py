@@ -7,9 +7,7 @@ from app.common.custom_exception import CustomException
 
 from app.config.config import DB_FAISS_PATH
 
-
-
-logger=get_logger(__name__)
+logger = get_logger(__name__)
 
 def load_vector_store():
     try:
@@ -21,7 +19,6 @@ def load_vector_store():
                 DB_FAISS_PATH,
                 embedding_model,
                 allow_dangerous_deserialization=True
-
             )
         else:
             logger.warning("No vectore store found..")
@@ -54,3 +51,4 @@ def save_vector_store(text_chunks):
         error_message = CustomException("Failed to craete new vectorstore " , e)
         logger.error(str(error_message))
     
+
