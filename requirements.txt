@@ -1,0 +1,9 @@
+langchain==0.3.27
+langchain_community==0.3.29
+langchain_huggingface==0.3.1
+faiss-cpu==1.12.0
+pypdf==6.0.0
+huggingface_hub==0.34.4
+flask==3.1.2
+python-dotenv==1.1.1
+sentence-transformers==5.1.0
