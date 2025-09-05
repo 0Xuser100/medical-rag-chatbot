@@ -171,3 +171,126 @@ CLAUDE.md
 *.claude
 dev_notes.md
 assistant_config.md
+
+# Cache directories and files
+__pycache__/
+*.py[cod]
+*$py.class
+.cache/
+*.cache
+cache/
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+
+# Python cache and compiled files
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments and conda
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-meta/
+
+# Application-specific cache
+vectorstore/cache/
+embeddings_cache/
+llm_cache/
+response_cache/
+query_cache/
+faiss_cache/
+
+# Langfuse and analytics cache
+langfuse_cache/
+analytics_cache/
+.langfuse/
+
+# Flask cache and sessions
+flask_session/
+.webassets-cache
+instance/
+
+# OS and editor cache
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+.Spotlight-V100
+.Trashes
+.directory
+.fuse_hidden*
+
+# IDE cache and settings
+.vscode/
+.idea/
+.eclipse/
+.settings/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# Jupyter notebook cache
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Database and temporary files
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+temp/
+tmp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Model and data cache (but keep actual data)
+models/cache/
+data/cache/
+data/processed/
+data/temp/
+
+# Testing cache
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover
+nosetests.xml
+.hypothesis/
+
+# Documentation build cache
+docs/_build/
+docs/.doctrees/
+site/
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Redis dump files (if using Redis in v2.0)
+dump.rdb
+
+# Performance monitoring cache
+monitoring_cache/
+metrics_cache/

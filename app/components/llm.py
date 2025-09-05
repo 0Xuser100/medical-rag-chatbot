@@ -4,6 +4,7 @@ from config.config import OPEN_AI_API_KEY,OPEN_AI_MODEL
 from common.logger import get_logger
 from common.custom_exception import CustomException
 
+
 logger = get_logger(__name__)
 
 def load_llm(OPEN_AI_MODEL: str = OPEN_AI_MODEL ,OPEN_AI_API_KEY :str = OPEN_AI_API_KEY):
