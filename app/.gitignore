@@ -165,3 +165,9 @@ data/processed/
 # Logs
 *.log
 logs/
+
+# Development and AI Assistant files
+CLAUDE.md
+*.claude
+dev_notes.md
+assistant_config.md
