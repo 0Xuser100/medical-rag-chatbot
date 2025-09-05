@@ -41,7 +41,7 @@ def create_qa_chain():
         qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
-            retriever = db.as_retriever(search_kwargs={'k':1}),
+            retriever = db.as_retriever(search_kwargs={'k':5}),
             return_source_documents=False,
             chain_type_kwargs={'prompt': set_custom_prompt()}
         )
@@ -52,6 +52,7 @@ def create_qa_chain():
     except Exception as e:
         error_message = CustomException("Failed to make a QA chain", e)
         logger.error(str(error_message))
+        raise error_message
 
 
 

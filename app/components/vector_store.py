@@ -21,11 +21,14 @@ def load_vector_store():
                 allow_dangerous_deserialization=True
             )
         else:
-            logger.warning("No vectore store found..")
+            error_message = CustomException("No vector store found at path: " + DB_FAISS_PATH)
+            logger.error(str(error_message))
+            raise error_message
 
     except Exception as e:
         error_message = CustomException("Failed to load vectorstore" , e)
         logger.error(str(error_message))
+        raise error_message
 
 # Creating new vectorstore function
 def save_vector_store(text_chunks):
@@ -48,7 +51,8 @@ def save_vector_store(text_chunks):
         return db
     
     except Exception as e:
-        error_message = CustomException("Failed to craete new vectorstore " , e)
+        error_message = CustomException("Failed to create new vectorstore " , e)
         logger.error(str(error_message))
+        raise error_message
     
 
