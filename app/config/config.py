@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 OPEN_AI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-OPEN_AI_MODEL="gpt-5-mini"
+OPEN_AI_MODEL="gpt-4o-mini"
 DB_FAISS_PATH="vectorstore/db_faiss"
 DATA_PATH="data/"
 CHUNK_SIZE=500

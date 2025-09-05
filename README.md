@@ -1,179 +1,372 @@
-# Medical RAG Chatbot 🏥🤖
+# 🏥 Medical RAG Chatbot - Version 1.0
 
-A Retrieval-Augmented Generation (RAG) chatbot specifically designed for answering medical questions using PDF documents as knowledge base. Built with LangChain, HuggingFace, and FAISS.
+An intelligent medical question-answering chatbot built with **OpenAI GPT**, **LangChain**, and **FAISS** vector search. Get accurate, contextual answers to medical questions based on medical literature with advanced conversational memory.
 
-## 🚀 Features
+## ✨ Features
 
-- **PDF Processing**: Automatically loads and processes medical PDF documents
-- **Intelligent Chunking**: Splits documents into optimal chunks for retrieval
-- **Vector Search**: Uses FAISS for fast and accurate document retrieval
-- **Medical-Focused**: Custom prompt template optimized for medical Q&A
-- **HuggingFace Integration**: Leverages Mistral-7B-Instruct model for responses
-- **Modular Architecture**: Clean, maintainable codebase with proper error handling
+- 🤖 **OpenAI GPT Integration** - Powered by GPT-4o-mini for accurate responses
+- 🧠 **Advanced Memory System** - Remembers conversation context with smart memory management
+- 📚 **Medical Knowledge Base** - FAISS vector search through medical documents
+- 💬 **Modern Chat Interface** - Beautiful, responsive web UI with real-time interactions
+- 📱 **Mobile Responsive** - Works seamlessly on all devices
+- 💾 **Export Conversations** - Download chat history as text files
+- 🔄 **Smart Memory Types** - Window memory for short chats, summary memory for long conversations
+- 🎯 **Context Awareness** - AI references previous questions and builds on earlier answers
 
-## 🏗️ Architecture
+## 🚀 Quick Start
 
-### System Workflow
-![Medical RAG Workflow](Medical+RAG+Workflow.png)
+### Prerequisites
 
-The system follows a comprehensive pipeline from setup to deployment:
+- Python 3.12
+- **Conda** package manager
+- OpenAI API key (get from [OpenAI Platform](https://platform.openai.com/))
 
-**🔧 Project Setup & Configuration**
-- Environment setup with logging and exception handling
-- Configuration management for API keys and parameters
+### 1. Environment Setup with Conda
 
-**📊 Data Processing & Storage** 
-- PDF document loading and intelligent chunking
-- Embeddings generation and vector storage in FAISS
-- Efficient data retrieval mechanisms
-
-**🤖 LLM & Retrieval**
-- Mistral AI model integration for response generation
-- Custom retriever with medical-focused prompting
-
-**🖥️ Application Layer**
-- Flask backend with HTML/CSS frontend
-- User-friendly interface for medical queries
-
-**🚀 Versioning & Deployment**
-- Git version control with CI/CD pipeline
-- Docker containerization and AWS deployment
-
-### Code Structure
-```
-app/
-├── components/           # Core RAG pipeline components
-│   ├── pdf_loader.py    # Document loading and chunking
-│   ├── embeddings.py    # HuggingFace embeddings
-│   ├── vector_store.py  # FAISS vector database
-│   ├── llm.py          # Language model integration
-│   ├── retriever.py    # QA chain with custom prompts
-│   └── data_loader.py  # Main processing pipeline
-├── config/
-│   └── config.py       # Configuration management
-├── common/
-│   ├── logger.py       # Logging utilities
-│   └── custom_exception.py # Exception handling
-└── templates/          # Future UI templates
-```
-
-## 🛠️ Installation
-
-1. **Clone the repository**
 ```bash
+# Clone the repository
 git clone https://github.com/0Xuser100/medical-rag-chatbot.git
-cd medical-rag-chatbot
-```
+cd MedicalRag
 
-2. **Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# Create conda environment with Python 3.12
+conda create -n medical-rag python=3.12 -y
+conda activate medical-rag
 
-3. **Install dependencies**
-```bash
+# Navigate to app directory and install dependencies
+cd app
 pip install -r requirements.txt
 ```
 
-4. **Set up environment variables**
+### 2. Configuration
+
 ```bash
-cp app/.env.example app/.env
-```
-Edit `app/.env` and add your HuggingFace token:
-```
-HF_TOKEN=your_huggingface_token_here
-HUGGINGFACE_API_TOKEN=your_huggingface_token_here
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your OpenAI API key
+OPENAI_API_KEY="your_openai_api_key_here"
 ```
 
-## 📚 Usage
+### 3. Prepare Medical Knowledge Base
 
-### 1. Prepare Your Data
-- Place your medical PDF files in the `data/` directory
-- Supported format: PDF files only
-
-### 2. Process Documents and Create Vector Store
 ```bash
-# Run from project root
-python -m app.components.data_loader
+# Place your medical PDF files in the data/ directory
+# Example: data/medical_encyclopedia.pdf
 
-# Or alternatively
-python app/components/data_loader.py
+# Create FAISS vector store from PDFs
+python components/data_loader.py
 ```
 
-### 3. Query the System
+### 4. Launch the Chatbot
+
+```bash
+# Start the Flask application
+python application.py
+```
+
+🎉 **Visit `http://localhost:5000` to start chatting with your medical AI assistant!**
+
+## 🧠 Advanced Memory System
+
+### How Memory Works
+
+The chatbot features sophisticated conversational memory:
+
+- **🔄 Context Retention**: Remembers what you've discussed throughout the conversation
+- **🎯 Follow-up Awareness**: Understands references like "What are the symptoms?" after asking about diabetes
+- **📊 Smart Memory Types**:
+  - **Window Memory** (≤10 messages): Keeps recent conversation turns
+  - **Summary Memory** (>10 messages): Summarizes old content, maintains recent context
+- **💭 Memory Indicators**: UI shows conversation length and active memory type
+
+### Example Conversation Flow
+
+```
+You: "What is diabetes?"
+AI: "Diabetes is a chronic condition where blood sugar levels are too high..."
+
+You: "What are the symptoms?"  ← AI knows you're still asking about diabetes
+AI: "The symptoms of diabetes include increased thirst, frequent urination..."
+
+You: "How is it treated?"  ← AI maintains context about diabetes
+AI: "Diabetes treatment involves blood sugar monitoring, medication..."
+```
+
+## 📁 Project Structure
+
+```
+MedicalRag/
+├── app/
+│   ├── application.py              # 🌐 Main Flask web application
+│   ├── requirements.txt            # 📦 Python dependencies
+│   ├── .env.example               # 🔧 Environment variables template
+│   │
+│   ├── components/                 # 🔧 Core RAG Components
+│   │   ├── llm.py                 # 🤖 OpenAI GPT integration
+│   │   ├── embeddings.py          # 📊 OpenAI embeddings (text-embedding-3-small)
+│   │   ├── memory.py              # 🧠 Advanced conversation memory system
+│   │   ├── vector_store.py        # 🗄️ FAISS vector database management
+│   │   ├── retriever.py           # 🔍 Document retrieval and QA chain
+│   │   ├── pdf_loader.py          # 📄 PDF processing utilities
+│   │   └── data_loader.py         # ⚡ FAISS index creation utility
+│   │
+│   ├── config/                     # ⚙️ Configuration
+│   │   └── config.py              # 🔧 Application settings
+│   │
+│   ├── common/                     # 🛠️ Utilities
+│   │   ├── logger.py              # 📝 Logging system
+│   │   └── custom_exception.py    # ❗ Exception handling
+│   │
+│   ├── templates/                  # 🎨 Web Interface
+│   │   └── index.html             # 💬 Modern chat UI
+│   │
+│   ├── data/                      # 📚 Medical Documents
+│   │   └── *.pdf                  # Your medical PDF files
+│   │
+│   └── vectorstore/               # 🗃️ Vector Database
+│       └── db_faiss/              # FAISS index files
+│           ├── index.faiss
+│           └── index.pkl
+└── README.md                      # 📖 This file
+```
+
+## ⚙️ Configuration
+
+### Model Settings (`config/config.py`)
 ```python
-from app.components.retriever import create_qa_chain
-
-# Initialize the QA chain
-qa_chain = create_qa_chain()
-
-# Ask medical questions
-response = qa_chain.invoke({"query": "What are the symptoms of diabetes?"})
-print(response["result"])
+OPEN_AI_MODEL = "gpt-4o-mini"      # OpenAI model (fast, cost-effective)
+CHUNK_SIZE = 500                   # Text chunk size for processing
+CHUNK_OVERLAP = 50                 # Overlap between chunks for context
 ```
 
-## 🔧 Configuration
+### Available OpenAI Models
+- `gpt-4o-mini` ✅ (default - fast, economical)
+- `gpt-4o` (more capable, higher cost)
+- `gpt-4-turbo` (previous generation)
 
-Key configuration parameters in `app/config/config.py`:
+### Memory Configuration
+- **Window Memory**: Keeps 3-6 recent message pairs
+- **Summary Memory**: Summarizes conversations >10 messages
+- **Auto-switching**: System automatically chooses optimal memory type
 
-| Parameter | Default Value | Description |
-|-----------|---------------|-------------|
-| `HUGGINGFACE_REPO_ID` | `mistralai/Mistral-7B-Instruct-v0.3` | LLM model |
-| `DB_FAISS_PATH` | `vectorstore/db_faiss` | Vector store location |
-| `DATA_PATH` | `data/` | PDF documents directory |
-| `CHUNK_SIZE` | `800` | Text chunk size |
-| `CHUNK_OVERLAP` | `100` | Overlap between chunks |
+## 🔧 Usage Examples
 
-## 🔍 How It Works
+### Basic Medical Queries
+```
+"What is hypertension?"
+"Explain the symptoms of pneumonia"
+"How is diabetes diagnosed?"
+```
 
-1. **Document Loading**: PDFs are loaded from the `data/` directory using LangChain's PyPDFLoader
-2. **Text Chunking**: Documents are split into overlapping chunks for optimal retrieval
-3. **Embeddings**: Text chunks are converted to embeddings using `sentence-transformers/all-MiniLM-L6-v2`
-4. **Vector Storage**: Embeddings are stored in FAISS for fast similarity search
-5. **Query Processing**: User questions are embedded and matched against the knowledge base
-6. **Response Generation**: Retrieved context is sent to Mistral-7B model with a medical-focused prompt
+### Conversational Follow-ups
+```
+User: "What is asthma?"
+AI: "Asthma is a respiratory condition..."
 
-## 📋 Requirements
+User: "What triggers it?"  ← AI knows "it" refers to asthma
+AI: "Asthma can be triggered by allergens, exercise..."
 
-- Python 3.8+
-- HuggingFace account and API token
-- At least 4GB RAM (for model inference)
-- GPU recommended but not required
+User: "Any prevention methods?"  ← Continues context
+AI: "To prevent asthma attacks, avoid known triggers..."
+```
 
-## 🚧 Current Limitations
+### UI Features
+- **💾 Export Chat**: Download conversation as `.txt` file
+- **🗑️ Clear History**: Reset conversation and memory
+- **📊 Message Counter**: Track conversation length
+- **🧠 Memory Status**: Visual indicator when smart memory is active
 
-- Supports PDF files only
-- Responses limited to 2-3 lines (configurable in prompt)
-- Requires HuggingFace token for model access
-- English language only
+## 📚 Managing Medical Knowledge Base
+
+### Adding New Documents
+
+1. **Add PDF files** to the `data/` directory
+2. **Recreate vector store**:
+   ```bash
+   conda activate medical-rag
+   python components/data_loader.py
+   ```
+3. **Restart application** to use updated knowledge base
+
+### Supported Document Types
+- ✅ PDF files (medical textbooks, research papers, clinical guidelines)
+- ✅ Text-based PDFs (searchable content)
+- ❌ Image-only PDFs (not supported)
+
+## 🛠️ Development & Troubleshooting
+
+### Development Mode
+```bash
+conda activate medical-rag
+export FLASK_DEBUG=1  # Enable debug mode
+python application.py
+```
+
+### Common Issues & Solutions
+
+**🔑 OpenAI API Error**
+```
+Error: API connection error
+```
+**Solution**: 
+- Verify `OPENAI_API_KEY` in `.env` file
+- Check OpenAI account credits
+- Ensure stable internet connection
+
+**🗄️ Vector Store Not Found**
+```
+Error: No vector store found
+```
+**Solution**:
+```bash
+python components/data_loader.py
+```
+
+**📄 PDF Processing Error**
+```
+Error: No documents loaded from PDFs
+```
+**Solution**:
+- Ensure PDF files are in `data/` directory
+- Verify PDFs are readable (not corrupted/password-protected)
+- Check PDF contains extractable text
+
+**🧠 Memory Issues**
+```
+Error: Failed to create conversational memory
+```
+**Solution**:
+- Verify all dependencies installed: `pip install -r requirements.txt`
+- Check OpenAI API key validity
+- Restart application
+
+### Dependencies (`requirements.txt`)
+```txt
+langchain==0.3.27
+langchain_community==0.3.29
+langchain-openai==0.3.32
+faiss-cpu==1.12.0
+pypdf==6.0.0
+flask==3.1.2
+python-dotenv==1.1.1
+```
+
+## 🚀 Deployment
+
+### Production Environment Variables
+```bash
+OPENAI_API_KEY=your_production_api_key
+FLASK_ENV=production
+```
+
+### Docker Deployment
+```dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY app/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY app/ .
+
+# Expose port
+EXPOSE 5000
+
+# Run application
+CMD ["python", "application.py"]
+```
+
+### Build and Run Docker Container
+```bash
+# Build image
+docker build -t medical-rag-chatbot .
+
+# Run container
+docker run -p 5000:5000 -e OPENAI_API_KEY=your_key medical-rag-chatbot
+```
+
+## 🔬 Technical Architecture
+
+### RAG Pipeline Flow
+1. **📄 Document Processing**: PDFs → Text Chunks
+2. **🔢 Embeddings**: Text → OpenAI Embeddings (1536 dimensions)
+3. **🗄️ Vector Storage**: Embeddings → FAISS Index
+4. **🔍 Query Processing**: Question → Similarity Search → Context Retrieval
+5. **🤖 Response Generation**: Context + Memory + Question → GPT Response
+6. **🧠 Memory Update**: Store conversation turn for future context
+
+### Memory Architecture
+- **Session Storage**: Flask sessions store message history
+- **Dynamic Memory**: Creates fresh memory context per request
+- **Context Population**: Rebuilds conversational context from session
+- **Smart Switching**: Chooses memory type based on conversation length
+
+## 📊 Performance & Costs
+
+### OpenAI API Costs (Approximate)
+- **GPT-4o-mini**: ~$0.0001 per 1K input tokens
+- **Embeddings**: ~$0.00002 per 1K tokens
+- **Average conversation**: $0.01-0.05 depending on length
+
+### Performance Metrics
+- **Response time**: 2-5 seconds (depending on context length)
+- **Memory efficiency**: Automatic summarization for long conversations
+- **Vector search**: Sub-second similarity search with FAISS
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes and test thoroughly
+4. Commit: `git commit -m 'Add amazing feature'`
+5. Push: `git push origin feature/amazing-feature`
+6. Open a Pull Request
 
-## 📝 License
+### Development Guidelines
+- Follow existing code structure and patterns
+- Add comprehensive error handling
+- Update README.md for new features
+- Test with various medical documents
+- Ensure memory system compatibility
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- [LangChain](https://langchain.com/) for the RAG framework
-- [HuggingFace](https://huggingface.co/) for models and embeddings
-- [FAISS](https://github.com/facebookresearch/faiss) for vector similarity search
-- [Mistral AI](https://mistral.ai/) for the language model
+- **[OpenAI](https://openai.com/)** for GPT models and embeddings API
+- **[LangChain](https://langchain.com/)** for RAG framework and memory systems
+- **[FAISS](https://github.com/facebookresearch/faiss)** for efficient vector similarity search
+- **[Flask](https://flask.palletsprojects.com/)** for web application framework
 
 ## 📞 Support
 
-If you have questions or need help, please:
-- Open an issue on GitHub
-- Check the existing issues for similar problems
-- Review the documentation in `CLAUDE.md`
+For support and questions:
+- 🐛 **Bug Reports**: Create an issue on GitHub
+- 💡 **Feature Requests**: Open a discussion on GitHub
+- 📚 **Documentation**: Check this README and code comments
+- 🔧 **Configuration Help**: Review the troubleshooting section
 
 ---
 
-**⚠️ Medical Disclaimer**: This chatbot is for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare providers for medical decisions.
+## ⚠️ Medical Disclaimer
+
+**Important**: This chatbot is designed for **informational and educational purposes only**. It should **never be used as a substitute** for professional medical advice, diagnosis, or treatment. 
+
+- Always consult qualified healthcare providers for medical decisions
+- In case of medical emergencies, contact emergency services immediately
+- The AI responses are based on training data and may contain errors
+- Medical knowledge evolves rapidly; always verify information with current sources
+
+---
+
+**Version 1.0** | Built with ❤️ for medical education and research | Powered by OpenAI & Python 3.12
