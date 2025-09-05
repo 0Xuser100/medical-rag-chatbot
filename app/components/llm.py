@@ -1,24 +1,21 @@
-from langchain_huggingface import HuggingFaceEndpoint
-from app.config.config import HF_TOKEN,HUGGINGFACE_REPO_ID
+from langchain_openai import ChatOpenAI
+from config.config import OPEN_AI_API_KEY,OPEN_AI_MODEL
 
-from app.common.logger import get_logger
-from app.common.custom_exception import CustomException
+from common.logger import get_logger
+from common.custom_exception import CustomException
 
 logger = get_logger(__name__)
 
-def load_llm(huggingface_repo_id: str = HUGGINGFACE_REPO_ID , hf_token:str = HF_TOKEN):
+def load_llm(OPEN_AI_MODEL: str = OPEN_AI_MODEL ,OPEN_AI_API_KEY :str = OPEN_AI_API_KEY):
     try:
-        logger.info("Loading LLM from HuggingFace")
+        logger.info("Loading OpenAI LLM")
 
-        llm = HuggingFaceEndpoint(
-            repo_id=huggingface_repo_id,
-            huggingfacehub_api_token=hf_token,
-            temperature=0.3,
-            max_new_tokens=256,
-            return_full_text=False,
-        )
+        llm = ChatOpenAI(
+                model=OPEN_AI_MODEL,
+                api_key=OPEN_AI_API_KEY,
+            )
 
-        logger.info("LLM loaded sucesfully...")
+        logger.info("OpenAI LLM loaded successfully...")
 
         return llm
     

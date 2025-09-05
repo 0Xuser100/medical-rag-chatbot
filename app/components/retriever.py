@@ -1,12 +1,12 @@
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 
-from app.components.llm import load_llm
-from app.components.vector_store import load_vector_store
+from components.llm import load_llm
+from components.vector_store import load_vector_store
 
-from app.config.config import HUGGINGFACE_REPO_ID,HF_TOKEN
-from app.common.logger import get_logger
-from app.common.custom_exception import CustomException
+from config.config import OPEN_AI_MODEL,OPEN_AI_API_KEY
+from common.logger import get_logger
+from common.custom_exception import CustomException
 
 
 logger = get_logger(__name__)
@@ -33,7 +33,7 @@ def create_qa_chain():
         if db is None:
             raise CustomException("Vector store not present or empty")
 
-        llm = load_llm(huggingface_repo_id=HUGGINGFACE_REPO_ID , hf_token=HF_TOKEN )
+        llm = load_llm(OPEN_AI_MODEL=OPEN_AI_MODEL , OPEN_AI_API_KEY=OPEN_AI_API_KEY )
 
         if llm is None:
             raise CustomException("LLM not loaded")

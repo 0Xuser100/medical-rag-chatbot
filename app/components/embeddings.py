@@ -1,17 +1,18 @@
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
-from app.common.logger import get_logger
-from app.common.custom_exception import CustomException
+
+from common.logger import get_logger
+from common.custom_exception import CustomException
 
 logger = get_logger(__name__)
 
 def get_embedding_model():
     try:
-        logger.info("Intializing our Huggingface embedding model")
+        logger.info("Initializing OpenAI embedding model")
 
-        model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        model = OpenAIEmbeddings( model="text-embedding-3-small",dimensions=1536)
 
-        logger.info("Huggingface embedding model loaded sucesfully....")
+        logger.info("OpenAI embedding model loaded successfully....")
 
         return model
     
