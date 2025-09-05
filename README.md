@@ -13,6 +13,33 @@ A Retrieval-Augmented Generation (RAG) chatbot specifically designed for answeri
 
 ## 🏗️ Architecture
 
+### System Workflow
+![Medical RAG Workflow](Medical+RAG+Workflow.png)
+
+The system follows a comprehensive pipeline from setup to deployment:
+
+**🔧 Project Setup & Configuration**
+- Environment setup with logging and exception handling
+- Configuration management for API keys and parameters
+
+**📊 Data Processing & Storage** 
+- PDF document loading and intelligent chunking
+- Embeddings generation and vector storage in FAISS
+- Efficient data retrieval mechanisms
+
+**🤖 LLM & Retrieval**
+- Mistral AI model integration for response generation
+- Custom retriever with medical-focused prompting
+
+**🖥️ Application Layer**
+- Flask backend with HTML/CSS frontend
+- User-friendly interface for medical queries
+
+**🚀 Versioning & Deployment**
+- Git version control with CI/CD pipeline
+- Docker containerization and AWS deployment
+
+### Code Structure
 ```
 app/
 ├── components/           # Core RAG pipeline components
