@@ -1,0 +1,59 @@
+# CLAUDE.md files
+CLAUDE.md
+app/CLAUDE.md
+**/CLAUDE.md
+
+# AI Assistant and development files
+*.claude
+dev_notes.md
+assistant_config.md
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+.conda/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache directories
+cache/
+.cache/
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Application specific
+vectorstore/cache/
+langfuse_cache/
+flask_session/

@@ -1,8 +1,16 @@
 from flask import Flask,render_template,request,session,redirect,url_for,jsonify
 from components.memory import create_session_qa_chain
-from config.config import OPEN_AI_API_KEY
+from config.config import OPEN_AI_API_KEY,public_key,secret_key,host
 import os
 import traceback
+from langfuse import Langfuse
+from langfuse.langchain import CallbackHandler
+langfuse = Langfuse(
+    public_key=public_key,
+    secret_key=secret_key,
+    host=host
+)
+langfuse_handler = CallbackHandler()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -45,7 +53,7 @@ def index():
                 qa_chain = get_qa_chain_with_memory(session.get("messages", []))
                 
                 # Invoke the QA chain with question
-                response = qa_chain.invoke({"question": user_input})
+                response = qa_chain.invoke({"question": user_input},config={"callbacks": [langfuse_handler]})
                 result = response.get("answer", "Sorry, I couldn't generate a response.")
                 
                 # Add assistant response to messages
@@ -100,7 +108,7 @@ def export_conversation():
     )
 
 if __name__=="__main__":
-    app.run(host="0.0.0.0" , port=5000 , debug=False , use_reloader = False)
+    app.run(host="0.0.0.0" , port=5000 , debug=True , use_reloader = True)
 
 
 
