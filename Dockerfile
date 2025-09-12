@@ -14,16 +14,19 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-## Copying all contents from local to container
-COPY . .
+## Copy requirements file first (for better Docker layer caching)
+COPY app/requirements.txt .
 
 ## Install Python dependencies
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir -r requirements.txt
+
+## Copy the rest of the application
+COPY app/ .
 
 ## Expose only flask port
 EXPOSE 5000
 
 ## Run the Flask app
-CMD ["python", "app/application.py"]
+CMD ["python", "application.py"]
 
 
