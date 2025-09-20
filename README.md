@@ -6,7 +6,7 @@ An intelligent medical question-answering chatbot built with **OpenAI GPT**, **L
 
 - ⚡ **Performance Optimized** - 40% faster response times with optimized chunking
 - 📊 **Analytics & Monitoring** - Langfuse integration for real-time performance tracking
-- 🚀 **Enhanced Chunking** - 1000-character chunks with smart overlap for better medical context
+- 🚀 **Enhanced Chunking** - 900-character chunks with smart overlap for better medical context
 - 📈 **Improved Memory** - Optimized conversation handling with better context preservation
 - 🔧 **Production Ready** - Enhanced error handling and robust deployment features
 - 📱 **Better UX** - Improved streaming capabilities and response quality
@@ -81,6 +81,37 @@ python application.py
 
 🎉 **Visit `http://localhost:5000` to start chatting with your medical AI assistant!**
 
+## 🔁 RAG Pipeline Walkthrough
+
+When the project starts and on every user turn, the system moves through a predictable sequence that keeps the chatbot grounded in your medical PDFs.
+
+1. **Source Documents Ready**
+   - Place PDFs under `app/data/`.
+   - Run `python -m components.data_loader` to ingest, chunk, embed, and persist the FAISS vector store in `app/vectorstore/db_faiss/`.
+
+2. **App Startup (`app/application.py`)
+   - Flask loads environment variables (OpenAI + optional Langfuse keys) from `.env`.
+   - The first request triggers `components.memory.create_session_qa_chain()` to assemble the conversational RAG chain.
+
+3. **Vector Store & Retriever Setup**
+   - `components.vector_store.load_vector_store()` fetches the FAISS index.
+   - If files are missing or incompatible, `recreate_vector_store()` rebuilds them by calling the data loader pipeline.
+   - The index becomes a retriever (`db.as_retriever(search_kwargs={'k': 5})`) inside `components.retriever.create_qa_chain()`.
+
+4. **Prompt & Memory Injection**
+   - Custom prompt templates in `prompts/retriever_prompts.py` and `prompts/memory_prompts.py` outline how the LLM should answer cautiously.
+   - The memory module inspects `session["messages"]` to pick window or summary memory, preserving context across turns.
+
+5. **Answer Generation**
+   - The LangChain `ConversationalRetrievalChain` bundles the current question, relevant document chunks, and conversation history.
+   - `ChatOpenAI` (`gpt-4o-mini`) produces a grounded response. Langfuse callbacks log telemetry when keys are present.
+
+6. **Response Delivery**
+   - The assistant reply is added to the session and rendered in `templates/index.html`.
+   - Users can clear history (`/clear`) or export transcripts (`/export`) from the UI.
+
+This workflow shows how data is loaded, how the retriever is built, and how the RAG app ties everything together each time it runs.
+
 ## 🧠 Advanced Memory System
 
 ### How Memory Works
@@ -106,6 +137,18 @@ AI: "The symptoms of diabetes include increased thirst, frequent urination..."
 You: "How is it treated?"  ← AI maintains context about diabetes
 AI: "Diabetes treatment involves blood sugar monitoring, medication..."
 ```
+
+### Module Internals: `app/components/memory.py`
+
+The memory module wires together LangChain's memory primitives with the custom conversational prompt so every answer stays aligned with previous turns:
+
+- **Prompt Template (`CONVERSATIONAL_PROMPT_TEMPLATE`)** – Defines strict guardrails: use only retrieved context, speak cautiously, cite lack of evidence when necessary, and remind users to consult professionals when they seek medical decisions (`prompts/memory_prompts.py:4`).
+- **`ConversationalMemory` class** – A lightweight manager that lazily constructs either `ConversationBufferWindowMemory` or `ConversationSummaryBufferMemory` depending on the requested mode. It keeps a cached LLM handle for the summarizer and exposes `get_memory()` so callers always receive an initialized memory object (`memory.py:31`).
+- **`create_conversational_qa_chain()`** – Loads the FAISS retriever and OpenAI chat model, builds the appropriate memory instance, then assembles a `ConversationalRetrievalChain` with the custom prompt and `k=5` document lookups. This function concentrates the glue logic for conversational RAG construction (`memory.py:90`, prompt defined in `prompts/memory_prompts.py`).
+- **`create_session_qa_chain()`** – Inspects the current Flask session message list to auto-select memory type: window memory for ≤10 messages (keeps up to the last four exchanges) and summary memory for longer chats (summarizes history with a higher token budget). It also pre-populates the chain's memory with past user/assistant pairs so the LLM sees prior context immediately (`memory.py:139`).
+- **Memory Population Loop** – Iterates through session messages in pairs, replaying them into the LangChain memory store via `add_user_message` and `add_ai_message`. This ensures the reconstructed chain mirrors the live conversation state even after server restarts or route redirects (`memory.py:173`).
+
+Together these pieces enable the app to rehydrate a fresh conversational chain on demand while preserving context, enforcing safety guidelines, and avoiding token bloat in long-running sessions.
 
 ## 📁 Project Structure
 
@@ -150,12 +193,12 @@ MedicalRag/
 ### Model Settings (`config/config.py`)
 ```python
 OPEN_AI_MODEL = "gpt-4o-mini"      # OpenAI model (fast, cost-effective)
-CHUNK_SIZE = 1000                  # Optimized chunk size (v2.0: up from 500)
-CHUNK_OVERLAP = 120                # Enhanced overlap (v2.0: up from 50)
+CHUNK_SIZE = 900                   # Optimized chunk size (production tuned)
+CHUNK_OVERLAP = 90                 # Smart overlap to preserve context boundaries
 ```
 
 ### Performance Improvements (v2.0)
-- **Chunking Optimization**: 1000/120 character chunking for better medical context
+- **Chunking Optimization**: 900/90 character chunking for better medical context
 - **Faster Vector Search**: 40% improvement with fewer, better chunks
 - **Enhanced Memory**: Optimized conversation context handling
 - **Analytics Integration**: Real-time performance monitoring
@@ -165,10 +208,13 @@ CHUNK_OVERLAP = 120                # Enhanced overlap (v2.0: up from 50)
 - `gpt-4o` (more capable, higher cost)
 - `gpt-4-turbo` (previous generation)
 
-### Memory Configuration
-- **Window Memory**: Keeps 3-6 recent message pairs
-- **Summary Memory**: Summarizes conversations >10 messages
-- **Auto-switching**: System automatically chooses optimal memory type
+- **Retrieval & Memory Configuration (`config/config.py`)
+- `RETRIEVER_TOP_K` = 5 (env override available) → document chunks fetched per question for both conversational and single-turn chains
+- `MEMORY_SUMMARY_THRESHOLD` = 8 → switch to summary memory after this many messages
+- `MEMORY_WINDOW_DEFAULT_K` / `MEMORY_WINDOW_MAX_K` = 2 / 3 → number of recent exchanges preserved in window mode
+- `MEMORY_WINDOW_TOKEN_LIMIT` = 800 → baseline token budget used when constructing window memory
+- `MEMORY_SUMMARY_TOKEN_LIMIT` = 1200 and `MEMORY_SUMMARY_RECENT_K` = 4 → compression budget and recent exchange count for summary mode
+- Auto-switching logic lives in `components.memory.create_session_qa_chain()` and reads these constants on every request
 
 ## 🔧 Usage Examples
 
@@ -357,7 +403,7 @@ docker run -p 5000:5000 \
 ## 🔬 Technical Architecture (v2.0 Enhanced)
 
 ### RAG Pipeline Flow
-1. **📄 Document Processing**: PDFs → Optimized Text Chunks (1000/120)
+1. **📄 Document Processing**: PDFs → Optimized Text Chunks (900/90)
 2. **🔢 Embeddings**: Text → OpenAI Embeddings (1536 dimensions)
 3. **🗄️ Vector Storage**: Embeddings → Optimized FAISS Index
 4. **🔍 Query Processing**: Question → Faster Similarity Search → Context Retrieval
