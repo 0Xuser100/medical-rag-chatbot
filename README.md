@@ -24,6 +24,15 @@ An intelligent medical question-answering chatbot built with **OpenAI GPT**, **L
 - 📊 **Performance Analytics** - Real-time monitoring with Langfuse integration
 - ⚡ **Optimized Search** - 40% faster vector search with improved chunking strategy
 
+## 🛠️ Tech Stack
+
+- **Backend**: Python 3.12, Flask 3.x
+- **LLM & Retrieval**: LangChain, OpenAI GPT-4o-mini, text-embedding-3-small embeddings, FAISS vector store
+- **Frontend**: HTML, CSS, and vanilla JavaScript rendered from `templates/index.html`
+- **Observability**: Langfuse tracing and analytics callbacks
+- **DevOps**: Dockerized app, Jenkins CI/CD pipeline, AWS App Runner deployment target
+- **Data Processing**: PyPDF for ingestion, RecursiveCharacterTextSplitter for chunking
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -96,7 +105,7 @@ When the project starts and on every user turn, the system moves through a predi
 3. **Vector Store & Retriever Setup**
    - `components.vector_store.load_vector_store()` fetches the FAISS index.
    - If files are missing or incompatible, `recreate_vector_store()` rebuilds them by calling the data loader pipeline.
-   - The index becomes a retriever (`db.as_retriever(search_kwargs={'k': 5})`) inside `components.retriever.create_qa_chain()`.
+   - The index becomes a retriever (`db.as_retriever(search_kwargs={'k': RETRIEVER_TOP_K})`) inside `components.retriever.create_qa_chain()`.
 
 4. **Prompt & Memory Injection**
    - Custom prompt templates in `prompts/retriever_prompts.py` and `prompts/memory_prompts.py` outline how the LLM should answer cautiously.
@@ -111,6 +120,18 @@ When the project starts and on every user turn, the system moves through a predi
    - Users can clear history (`/clear`) or export transcripts (`/export`) from the UI.
 
 This workflow shows how data is loaded, how the retriever is built, and how the RAG app ties everything together each time it runs.
+
+## 🔐 Environment Variables
+
+| Name | Required | Description |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | ✅ | OpenAI key for embeddings and chat completions. |
+| `public_key` | Optional | Langfuse public key used for analytics. |
+| `secret_key` | Optional | Langfuse secret key used for analytics. |
+| `host` | Optional | Langfuse host (defaults to SaaS endpoint). |
+| `RETRIEVER_TOP_K` | Optional | Overrides the default number of chunks fetched per query (default: `5`). |
+
+Add these values to `.env` in `app/`, then restart the application to pick up changes.
 
 ## 🧠 Advanced Memory System
 
@@ -428,10 +449,18 @@ docker run -p 5000:5000 \
 - **Chunk Count**: ~3,500 (optimized from 7,080 in v1.0)
 
 ### Quality Improvements
-- **Better Medical Context**: 1000-character chunks preserve complete medical concepts
+- **Better Medical Context**: 900-character chunks preserve key explanations while shortening prompts
 - **Enhanced Accuracy**: Improved medical terminology understanding
 - **Reduced Fragmentation**: Medical definitions and treatments stay coherent
 - **Smart Analytics**: Real-time performance and usage insights
+
+## ✅ Production Readiness Checklist
+
+- ✅ Add medical PDFs under `app/data/` and rebuild embeddings with `python -m components.data_loader`
+- ✅ Populate `.env` with `OPENAI_API_KEY` and optional Langfuse credentials
+- ✅ Verify FAISS artifacts exist in `app/vectorstore/db_faiss/` (regenerate if mismatched)
+- ✅ Exercise the chat UI locally (`python application.py`) and confirm safeguard messaging appears
+- ✅ Run the Jenkins pipeline to build, scan, push, and deploy the Docker image to AWS App Runner
 
 ## 🤝 Contributing
 
@@ -476,7 +505,7 @@ For support and questions:
 ## 🆕 What's New in Version 2.0
 
 ### Performance Enhancements
-- ⚡ **40% Faster Vector Search** with optimized 1000/120 chunking
+- ⚡ **Optimized Vector Search** with tuned 900/90 chunking
 - 🚀 **Improved Response Times** from 2-5s to 1.5-3s
 - 💾 **50% Smaller Index Size** with better chunk optimization
 - 📈 **Enhanced Memory Management** for better conversation flow
